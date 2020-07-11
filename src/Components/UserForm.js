@@ -1,63 +1,113 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import styles from './UserForm.module.css';
 
+const initialState = {
+    firstName: {
+        value: "",
+        error: null
+    }, 
+    lastName:{
+        value: "",
+        error: null
+    },
+    email:{
+        value: "",
+        error: null
+    },
+    password: {
+        value: "",
+        error: null
+    },
+    confirmPassword: {
+        value: "",
+        error: null
+    }
+}
+
+function reducer(state, action){
+    return{
+        ...state,
+        [action.type]: action.payload
+    };
+}
+
 const UserForm = (props) => {
+    const [state, dispatch] = useReducer(reducer, initialState);
 
-    const [firstName, setfirstName] = useState("");
-    const [lastName, setlastName] = useState("");
-    const [email, setemail] = useState("");
-    const [password, setpassword] = useState("");
-    const [confirmPassword, setconfirmPassword] = useState("");
+    function handleChange(e, payload){
+        const{name} = e.target;
+        dispatch({
+            type: name,
+            payload: payload
+        });
+    }
 
-    const [firstNameError, setFirstNameError] = useState("");
-    const [lastNameError, setLastNameError] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [passwordError, setPasswordError] = useState("");
-    const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+    // const [firstName, setfirstName] = useState("");
+    // const [lastName, setlastName] = useState("");
+    // const [email, setemail] = useState("");
+    // const [password, setpassword] = useState("");
+    // const [confirmPassword, setconfirmPassword] = useState("");
+
+    // const [firstNameError, setFirstNameError] = useState("");
+    // const [lastNameError, setLastNameError] = useState("");
+    // const [emailError, setEmailError] = useState("");
+    // const [passwordError, setPasswordError] = useState("");
+    // const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
     const handleFirstName = (e) =>{
-        setfirstName(e.target.value);
+        let payload = {value: e.target.value, error: null};
         if(e.target.value.length < 2 && e.target.value.length > 0){
-            setFirstNameError("First name must be at least 2 letters");
+            payload["error"] = "First name must be at least 2 letters";
         }else{
-            setFirstNameError("");
+            payload["error"] = "";
         }
+        e.target.value = payload.value;
+        handleChange(e, payload);
     }
 
     const handleLastName = (e) =>{
-        setlastName(e.target.value);
+        let payload = {value: e.target.value, error: null};
         if(e.target.value.length < 2 && e.target.value.length > 0){
-            setLastNameError("Last name must be at least 2 letteres");
+            payload["error"] = "Last name must be at least 2 letters";
         }else{
-            setLastNameError("");
+            payload["error"] = "";
         }
+        e.target.value = payload.value;
+        handleChange(e, payload);
     }
 
     const handleEmail = (e) =>{
-        setemail(e.target.value);
+        let payload = {value: e.target.value, error: null};
         if(e.target.value.length < 2 && e.target.value.length > 0){
-            setEmailError("Email must be at least 2 letteres");
+            payload["error"] = "Email must be at least 2 letters";
         }else{
-            setEmailError("");
+            payload["error"] = "";
         }
+        e.target.value = payload.value;
+        handleChange(e, payload);
     }
 
     const handlePassword = (e) =>{
-        setpassword(e.target.value);
+        let payload = {value: e.target.value, error: null};
         if(e.target.value.length < 8 && e.target.value.length > 0){
-            setPasswordError("Password must be at least 8 characters");
+            payload["error"] = "Password must be at least 8 letters";
         }else{
-            setPasswordError("");
+            payload["error"] = "";
         }
+        e.target.value = payload.value;
+        handleChange(e, payload);
     }
 
     const handleConfirmPassword = (e) =>{
-        setconfirmPassword(e.target.value);
-        if(e.target.value !== password && e.target.value.length > 0){
-            setConfirmPasswordError("Passwords must match");
+        let payload = {value: e.target.value, error: null};
+        if(e.target.value !== state.password.value && e.target.value.length > 0){
+            payload["error"] = "Passwords do not match";
         }else{
-            setConfirmPasswordError("");
+            payload["error"] = "";
         }
+        e.target.value = payload.value;
+        handleChange(e, payload);
     }
 
     return (  
@@ -65,64 +115,64 @@ const UserForm = (props) => {
             <div className="row my-2 justify-content-center">
                 <div className="col-6">
                     <div className= {"row py-2 my-2 justify-content-center " + styles.inputRow}>
-                        <label className="col-3" for="">First Name</label>
-                        <input name="firstName" type="text" value={firstName} onChange={ e => handleFirstName(e)}/>
+                        <label className="col-3">First Name</label>
+                        <input name="firstName" type="text" value={state.firstName.value} onChange={ e => handleFirstName(e)}/>
                     </div>
                     {
-                        firstNameError ? 
+                        state.firstName.error ? 
                         <div className= "row py-2 my-2 justify-content-center text-danger">
-                            {firstNameError}
+                            {state.firstName.error}
                         </div>
                         :
                         ""
                     }
                     <div className={"row py-2 my-2 justify-content-center " + styles.inputRow}>
-                        <label className="col-3" for="">Last Name</label>
-                        <input name="lastName" type="text" value={lastName} onChange={ e => handleLastName(e)}/>
+                        <label className="col-3">Last Name</label>
+                        <input name="lastName" type="text" value={state.lastName.value} onChange={ e => handleLastName(e)}/>
                     </div>
                     {
-                        lastNameError ? 
+                        state.lastName.error ? 
                         <div className= "row py-2 my-2 justify-content-center text-danger">
-                            {lastNameError}
+                            {state.lastName.error}
                         </div>
                         :
                         ""
                     }
                     <div className={"row py-2 my-2 justify-content-center " + styles.inputRow}>
-                        <label className="col-3" for="">Email</label>
-                        <input name="email" type="email" value={email} onChange={ e => handleEmail(e)}/>
+                        <label className="col-3">Email</label>
+                        <input name="email" type="email" value={state.email.value} onChange={ e => handleEmail(e)}/>
                     </div>
                     {
-                        emailError ? 
+                        state.email.error ? 
                         <div className= "row py-2 my-2 justify-content-center text-danger">
-                            {emailError}
+                            {state.email.error}
                         </div>
                         :
                         ""
                     }
                     <div className={"row py-2 my-2 justify-content-center " + styles.inputRow}>
-                        <label className="col-3" for="">Password</label>
-                        <input name="password" type="password" value={password} onChange={ e=> handlePassword(e)}/>
+                        <label className="col-3">Password</label>
+                        <input name="password" type="password" value={state.password.value} onChange={ e=> handlePassword(e)}/>
                     </div>
                     {
-                        passwordError ? 
+                        state.password.error ? 
                         <div className= "row py-2 my-2 justify-content-center text-danger">
-                            {passwordError}
+                            {state.password.error}
                         </div>
                         :
                         ""
                     }
                     {
-                        confirmPasswordError ? 
+                        state.confirmPassword.error ? 
                         <div className= "row py-2 my-2 justify-content-center text-danger">
-                            {confirmPasswordError}
+                            {state.confirmPassword.error}
                         </div>
                         :
                         ""
                     }
                     <div className={"row py-2 my-2 justify-content-center " + styles.inputRow}>
-                        <label className="col-3" for="">Confirm Password</label>
-                        <input name="confirmPassword" type="password" value={confirmPassword} onChange = { e => handleConfirmPassword(e)}/>
+                        <label className="col-3">Confirm Password</label>
+                        <input name="confirmPassword" type="password" value={state.confirmPassword.value} onChange = { e => handleConfirmPassword(e)}/>
                     </div>
                 </div>
             </div>
@@ -134,23 +184,23 @@ const UserForm = (props) => {
                     </div>
                     <div className="row my-2 justify-content-center">
                         <div className="col-3">First Name</div>
-                        <div className="col-9">{firstName}</div>
+                        <div className="col-9">{state.firstName.value}</div>
                     </div>
                     <div className="row my-2 justify-content-center">
                         <div className="col-3">Last Name</div>
-                        <div className="col-9">{lastName}</div>
+                        <div className="col-9">{state.lastName.value}</div>
                     </div>
                     <div className="row my-2 justify-content-center">
                         <div className="col-3">Email</div>
-                        <div className="col-9">{email}</div>
+                        <div className="col-9">{state.email.value}</div>
                     </div>
                     <div className="row my-2 justify-content-center">
                         <div className="col-3">Password</div>
-                        <div className="col-9">{password}</div>
+                        <div className="col-9">{state.password.value}</div>
                     </div>
                     <div className="row my-2 justify-content-center">
                         <div className="col-3">Confirm Password</div>
-                        <div className="col-9">{confirmPassword}</div>
+                        <div className="col-9">{state.confirmPassword.value}</div>
                     </div>
                 </div>
             </div>
